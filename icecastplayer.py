@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import time
 import vlc
 from dataclasses import dataclass
 from enum import Enum, auto
 from os import path
+from typing import Callable
 EXEC_PATH = path.dirname(path.abspath(__file__))
 
 
@@ -89,5 +89,5 @@ class IcecastPlayer:
     def stop(self):
         self.__list_player.stop()
 
-    def set_media_changed_handler(self, handler):
+    def set_media_changed_handler(self, handler: Callable[[MediaMeta], None]):
         self.__media_changed_ext_handler = handler
