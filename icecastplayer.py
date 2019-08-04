@@ -3,6 +3,8 @@ import time
 import vlc
 from dataclasses import dataclass
 from enum import Enum, auto
+from os import path
+EXEC_PATH = path.dirname(path.abspath(__file__))
 
 
 class RadioMode(Enum):
@@ -55,7 +57,7 @@ class IcecastPlayer:
                              f'{icecast_credentials.stream_address}}}'
         self.__icecast_credentials = icecast_credentials
         self.__event_manager: vlc.EventManager = self.__list_player.get_media_player().event_manager()
-        self.add_track('media/tone.wav')
+        self.add_track(path.join(EXEC_PATH, 'media', 'tone.wav'))
         self.play()  # used to avoid startup problems with VLC
         self.__event_manager.event_attach(vlc.EventType.MediaPlayerMediaChanged, self.__media_changed)
         self.__current_media_meta = MediaMeta()
