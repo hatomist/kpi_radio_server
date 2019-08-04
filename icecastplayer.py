@@ -61,6 +61,7 @@ class IcecastPlayer:
         self.__current_media_meta = MediaMeta()
         self.__media_changed_ext_handler = None
         self.__radio_mode = RadioMode.RADIO
+        self.__paused = False
 
     def add_track(self, file_path):
         track: vlc.Media = self.__vlc_instance.media_new(file_path, self.__icecast_out)
@@ -70,7 +71,15 @@ class IcecastPlayer:
         self.__list_player.play()
 
     def pause(self):
-        self.__list_player.pause()
+        if self.__paused:
+            self.__list_player.set_pause(0)
+            self.__paused = False
+        else:
+            self.__list_player.set_pause(1)
+            self.__paused = True
+
+    def is_paused(self) -> bool:
+        return self.__paused
 
     def skip_track(self):
         self.__list_player.next()
