@@ -49,10 +49,10 @@ class IcecastPlayer:
         self.__list_player.set_media_list(self.__playlist)
         self.__media_player: vlc.MediaPlayer = self.__list_player.get_media_player()
         self.__icecast_out = f':sout=#transcode{{vcodec=none,acodec=vorb,ab=128,channels=2,' \
-                             f'samplerate=44100,scodec=none}}:duplicate{{dst=display,dst=std{{access=shout,mux=ogg,' \
+                             f'samplerate=44100,scodec=none}}:std{{access=shout,mux=ogg,' \
                              f'dst=//{icecast_credentials.src_name}:{icecast_credentials.src_password}@' \
                              f'{icecast_credentials.server_ip}:{icecast_credentials.server_port}/' \
-                             f'{icecast_credentials.stream_address}}}}}'
+                             f'{icecast_credentials.stream_address}}}'
         self.__icecast_credentials = icecast_credentials
         self.__event_manager: vlc.EventManager = self.__list_player.get_media_player().event_manager()
         self.add_track('media/tone.wav')
