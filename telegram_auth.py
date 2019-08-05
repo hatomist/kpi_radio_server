@@ -7,7 +7,7 @@ nullable_str = Union[str, None]
 
 
 class AdminLevel:
-    NOT_ADMIN = 0
+    USER = 0
     ADMIN = 1
     SUPER_ADMIN = 2
 
@@ -20,7 +20,7 @@ class TelegramUser:
     second_name: nullable_str = None
     ban_timestamp: int = 0
     ban_length: int = 0
-    admin_level: AdminLevel = AdminLevel.NOT_ADMIN
+    admin_level: AdminLevel = AdminLevel.USER
     tokens: Dict[str, int] = field(default_factory=dict)
 
 
