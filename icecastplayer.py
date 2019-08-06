@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 import vlc
 from dataclasses import dataclass
-from enum import Enum, auto
 from os import path
 from typing import Callable
 EXEC_PATH = path.dirname(path.abspath(__file__))
 
 
-class RadioMode(Enum):
-    RADIO = auto()
-    ANNOUNCEMENT = auto()
-    STREAM = auto()
+class RadioMode:
+    RADIO = 0
+    AUTO_RADIO = 1
+    ANNOUNCEMENT = 2
+    STREAM = 3
+    OFF = 4
 
 
 @dataclass
@@ -64,6 +65,7 @@ class IcecastPlayer:
         self.__media_changed_ext_handler = None
         self.__radio_mode = RadioMode.RADIO
         self.__paused = False
+        self.__air_time = 'Not configured'
 
     def add_track(self, file_path: str, from_who: str):
         track: vlc.Media = self.__vlc_instance.media_new(file_path, self.__icecast_out)
@@ -94,3 +96,30 @@ class IcecastPlayer:
 
     def set_media_changed_handler(self, handler: Callable[[MediaMeta], None]):
         self.__media_changed_ext_handler = handler
+
+    def set_radio_mode(self, air_time: str):
+        # TODO: maybe something else
+        self.__radio_mode = RadioMode.RADIO
+        self.__air_time = air_time
+        self.play()
+
+    def set_announcement_mode(self, air_time: str, file_path: str, back_to_mode: int):
+        # TODO: set announcement mode
+        self.__radio_mode = RadioMode.ANNOUNCEMENT
+        self.__air_time = air_time
+
+    def set_stream_mode(self, air_time: str):
+        # TODO: set stream mode
+        self.__radio_mode = RadioMode.STREAM
+        self.__air_time = air_time
+
+    def set_off_mode(self, air_time: str):
+        # TODO: maybe something else
+        self.__radio_mode = RadioMode.OFF
+        self.__air_time = air_time
+        self.stop()
+
+    def set_auto_mode(self, air_time: str):
+        # TODO: set auto radio mode
+        self.__radio_mode = RadioMode.AUTO_RADIO
+        self.__air_time = air_time
