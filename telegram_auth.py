@@ -177,9 +177,3 @@ def check_ban(func):
         else:
             return func(*args, **kwargs)
     return wrapper
-
-
-if __name__ == '__main__':
-    ta = TelegramAuth('mongodb://localhost:27017')
-    user = ta.get_user(0)
-    print(user.get_info())
