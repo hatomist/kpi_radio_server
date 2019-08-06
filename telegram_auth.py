@@ -3,7 +3,9 @@ from typing import Dict, Union
 import pymongo
 from functools import wraps
 from datetime import datetime
+from secrets import token_hex
 nullable_str = Union[str, None]
+TOKEN_LIFETIME = 60*60*24*7  # week
 # TODO: add counters for approved and disapproved songs... and maybe something else
 
 
@@ -73,11 +75,26 @@ class TelegramUser:
         self.__user_data.admin_level = admin_level
         self.__update_data()
 
-    def add_token(self, life_time) -> str:
-        pass  # TODO: generate token and return it
+    # Tokens are meant to be used with external applications (not with website cause widget can be used with one)
+    def add_token(self) -> str:
+        token = token_hex()
+        # well... hashing and salting are useless in case of tokens?
+        self.__user_data.tokens.update({token: timestamp() + TOKEN_LIFETIME})
+        self.__update_data()
+        return token
 
     def check_token(self, token: str) -> bool:
-        pass  # TODO: check if token is valid and return bool
+        if token in self.__user_data.tokens:
+            if self.__user_data.tokens[token] < timestamp():
+                self.__user_data.tokens.pop(token)  # remove outdated token
+                self.__update_data()
+                return False
+            else:
+                self.__user_data.tokens[token] = timestamp() + TOKEN_LIFETIME
+                self.__update_data()
+                return True
+        else:
+            return False
 
     def get_info(self) -> Dict[str, Union[str, int]]:
         return {'first_name': self.__user_data.first_name, 'second_name': self.__user_data.second_name,
