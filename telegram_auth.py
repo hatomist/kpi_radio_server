@@ -6,7 +6,6 @@ from datetime import datetime
 from secrets import token_hex
 nullable_str = Union[str, None]
 TOKEN_LIFETIME = 60*60*24*7  # week
-# TODO: add counters for approved and disapproved songs... and maybe something else
 
 
 class AdminLevel:
@@ -25,6 +24,9 @@ class UserData:
     ban_length: int = 0
     admin_level: int = AdminLevel.USER
     tokens: Dict[str, int] = field(default_factory=dict)
+    banned_counter: int = 0
+    approved_songs_counter: int = 0
+    disapproved_songs_counter: int = 0
 
 
 class TelegramAuth:
@@ -61,6 +63,8 @@ class TelegramUser:
         cur_time = timestamp()
         self.__user_data.ban_timestamp = cur_time
         self.__user_data.ban_length = cur_time + length
+        if length <= 0:
+            self.__user_data.banned_counter += 1
         self.__update_data()
 
     def set_first_name(self, name: str):
@@ -109,6 +113,14 @@ class TelegramUser:
 
     def get_ban(self) -> Dict[str, int]:
         return {'ban_timestamp': self.__user_data.ban_timestamp, 'ban_length': self.__user_data.ban_length}
+
+    def increment_approved(self):
+        self.__user_data.approved_songs_counter += 1
+        self.__update_data()
+
+    def increment_disapproved(self):
+        self.__user_data.disapproved_songs_counter += 1
+        self.__update_data()
 
 
 class ForbiddenError(BaseException):
@@ -165,3 +177,9 @@ def check_ban(func):
         else:
             return func(*args, **kwargs)
     return wrapper
+
+
+if __name__ == '__main__':
+    ta = TelegramAuth('mongodb://localhost:27017')
+    user = ta.get_user(0)
+    print(user.get_info())
